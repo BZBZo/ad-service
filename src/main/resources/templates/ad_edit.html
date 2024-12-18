@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link th:href="@{/css/ad_edit.css}" rel="stylesheet">
+    <script th:src="@{/js/ad_edit.js}" defer></script>
+    <title>광고 수정</title>
+</head>
+<body>
+<section class="signup-section">
+    <div class="container">
+        <header>
+            <h1 class="title">광고 수정</h1>
+        </header>
+        <form th:action="@{/ad/edit/{id}(id=${ad.id})}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="_method" value="put">
+
+            <!-- 광고영역 선택 -->
+            <div class="form-section">
+                <div class="form-header">
+                    <h2>01 <span>광고영역 선택</span></h2>
+                    <p>광고를 진행할 위치</p>
+                </div>
+                <div class="form-content">
+                    <div class="ad-area-options">
+                        <label class="option">
+                            <input type="radio" name="adPosition" value="side" th:checked="${ad.adPosition == 'side'}">
+                            <div class="option-box">
+                                <span class="check-icon">✔</span>
+                                <p>서브페이지 사이드</p>
+                                <small>서브페이지 좌측 <br> 또는 우측에 랜덤</small>
+                                <div class="ad-image-box">
+                                    <img src="/images/ad_left_image.png" alt="서브페이지 이미지">
+                                </div>
+                            </div>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="adPosition" value="top" th:checked="${ad.adPosition == 'top'}">
+                            <div class="option-box">
+                                <span class="check-icon">✔</span>
+                                <p>메인 상단</p>
+                                <small>메인 페이지 상단배너로 <br>슬라이드 형식으로 노출</small>
+                                <div class="ad-image-box">
+                                    <img src="/images/ad_top_image.png" alt="메인 상단 이미지">
+                                </div>
+                            </div>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="adPosition" value="mid" th:checked="${ad.adPosition == 'mid'}">
+                            <div class="option-box">
+                                <span class="check-icon">✔</span>
+                                <p>메인 중앙</p>
+                                <small>메인 페이지 중간배너로 <br>랜덤으로 노출</small>
+                                <div class="ad-image-box">
+                                    <img src="/images/ad_mid_image.png" alt="메인 중앙 이미지">
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 광고 기간 -->
+            <div class="form-section">
+                <div class="form-header">
+                    <h2>02 <span>광고기간</span></h2>
+                    <p>광고시작일, 광고종료일</p>
+                </div>
+                <div class="form-content">
+                    <div class="date-inputs">
+                        <input type="datetime-local" name="adStart" th:value="${#temporals.format(ad.adEnd, 'yyyy-MM-dd''T''HH:mm')}" required>
+                        <input type="datetime-local" name="adEnd" th:value="${#temporals.format(ad.adEnd, 'yyyy-MM-dd''T''HH:mm')}" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 광고명 및 URL -->
+            <div class="form-section">
+                <div class="form-header">
+                    <h2>03 <span>광고명</span></h2>
+                    <p>광고의 이름을 입력하세요.</p>
+                </div>
+                <div class="form-content">
+                    <input type="text" name="adTitle" placeholder="광고명" th:value="${ad.adTitle}" required>
+                </div>
+            </div>
+            <div class="form-section">
+                <div class="form-header">
+                    <h2>03 <span>URL</span></h2>
+                    <p>연결할 URL을 입력하세요.</p>
+                </div>
+                <div class="form-content">
+                    <input type="url" name="adUrl" placeholder="광고 URL" th:value="${ad.adUrl}" required>
+                </div>
+            </div>
+
+            <!-- 광고 이미지 -->
+            <div class="form-section">
+                <div class="form-header">
+                    <h2>05 <span>광고 이미지</span></h2>
+                    <p>이미지를 업로드하세요. (JPG, PNG 형식)</p>
+                </div>
+                <div class="form-content">
+                    <div class="image-preview" id="imagePreview">
+                        <img th:src="${ad.adImage}" alt="광고 이미지" id="existingImage">
+                    </div>
+                    <input type="file" id="adImageInput" name="adImage" accept="image/*">
+                </div>
+            </div>
+
+            <!-- 제출 버튼 -->
+            <button type="submit" class="submit-btn">수정 완료</button>
+        </form>
+    </div>
+</section>
+</body>
+</html>

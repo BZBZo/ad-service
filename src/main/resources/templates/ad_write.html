@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.7.1.js" crossorigin="anonymous"></script>
+    <script th:src="@{/js/ad_write.js}" defer></script>
+    <link th:href="@{/css/ad_write.css}" rel="stylesheet">
+    <title>회원가입</title>
+</head>
+<body>
+<div class="container">
+    <h1 class="title">광고 신청 페이지</h1>
+    <form class="ad-form" action="/api/ad/write" method="post" enctype="multipart/form-data">
+        <!-- 광고 영역 선택 -->
+        <div class="form-section">
+            <div class="form-header">
+                <h2>01 <span>광고영역 선택</span></h2>
+                <p>광고를 진행할 위치</p>
+            </div>
+            <div class="form-content">
+                <div class="ad-area-options">
+                    <label class="option">
+                        <input type="radio" name="adArea" value="side" checked>
+                        <div class="option-box">
+                            <span class="check-icon">✔</span>
+                            <p>서브페이지 사이드</p>
+                            <small>서브페이지 좌측 <br> 또는 우측에 랜덤</small>
+                            <div class="ad-image-box">
+                                <img src="/images/ad_left_image.png" alt="서브페이지 이미지">
+                            </div>
+                        </div>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="adArea" value="top">
+                        <div class="option-box">
+                            <span class="check-icon">✔</span>
+                            <p>메인 상단</p>
+                            <small>메인 페이지 상단배너로 <br>슬라이드 형식으로 노출</small>
+                            <div class="ad-image-box">
+                                <img src="/images/ad_top_image.png" alt="메인 상단 이미지">
+                            </div>
+                        </div>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="adArea" value="mid">
+                        <div class="option-box">
+                            <span class="check-icon">✔</span>
+                            <p>메인 중앙</p>
+                            <small>메인 페이지 중간배너로 <br>랜덤으로 노출</small>
+                            <div class="ad-image-box">
+                                <img src="/images/ad_mid_image.png" alt="메인 중앙 이미지">
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 광고 기간 -->
+        <div class="form-section">
+            <div class="form-header">
+                <h2>02 <span>광고기간</span></h2>
+                <p>광고시작일, 광고종료일</p>
+            </div>
+            <div class="form-content">
+                <div class="date-inputs">
+                    <input type="datetime-local" name="startDate" value="2024-11-26T11:00">
+                    <input type="datetime-local" name="endDate" value="2024-12-05T15:00">
+                </div>
+            </div>
+        </div>
+
+        <!-- 광고명 -->
+        <div class="form-section">
+            <div class="form-header">
+                <h2>03 <span>광고명</span></h2>
+            </div>
+            <div class="form-content">
+                <input type="text" name="adName" placeholder="광고명을 입력하세요">
+            </div>
+        </div>
+
+        <!-- 연결 페이지 -->
+        <div class="form-section">
+            <div class="form-header">
+                <h2>04 <span>연결페이지</span></h2>
+            </div>
+            <div class="form-content">
+                <input type="url" name="adLink" placeholder="광고배너 클릭시 연결할 주소를 입력하세요 ex) naver.com">
+            </div>
+        </div>
+
+        <!-- 등록 이미지 -->
+        <div class="form-section">
+            <div class="form-header">
+                <h2>05 <span>등록 이미지</span></h2>
+
+
+            </div>
+            <div class="form-content image-section">
+                <input type="file" name="adImage" id="adImageInput" accept="image/*">
+                <div class="image-preview">
+                  <span id="guidelinesText">
+                      <p>사이드: 가로 500px 세로 800px</p>
+                      <p>메인 상단: 가로 1600px 세로 840px</p>
+                      <p>메인 중앙: 가로 1600px 세로 150px</p>
+                  </span>
+                    <img id="previewImage" src="" alt="이미지 미리보기" style="display: none;">
+                    <button id="deleteImageButton" class="delete-button" style="display: none;">&times;</button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="btn-group">
+            <!-- 버튼 -->
+            <button type="submit" class="submit-btn">광고 신청하기</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

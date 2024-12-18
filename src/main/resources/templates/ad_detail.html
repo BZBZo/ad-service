@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link th:href="@{/css/ad_detail.css}" rel="stylesheet">
+    <script th:src="@{/js/ad_detail.js}" defer></script>
+    <title>광고 상세 정보</title>
+</head>
+<body>
+<div class="container">
+    <h1 class="title">신청 광고 상세 </h1>
+    <div class="form-section">
+        <div class="form-header">
+            <h2>01 <span>광고영역 선택</span></h2>
+            <p>광고를 진행할 위치</p>
+        </div>
+        <div class="form-content">
+            <div class="ad-area-options">
+                <!-- 서브페이지 사이드 -->
+                <label class="option">
+                    <input type="radio" name="adArea" value="side"
+                           th:checked="${ad.adPosition == 'side'}" disabled>
+                    <div class="option-box">
+                        <span class="check-icon">✔</span>
+                        <p>서브페이지 사이드</p>
+                        <small>서브페이지 좌측 <br> 또는 우측에 랜덤</small>
+                        <div class="ad-image-box">
+                            <img src="/images/ad_left_image.png" alt="서브페이지 이미지">
+                        </div>
+                    </div>
+                </label>
+
+                <!-- 메인 상단 -->
+                <label class="option">
+                    <input type="radio" name="adArea" value="top"
+                           th:checked="${ad.adPosition == 'top'}" disabled>
+                    <div class="option-box">
+                        <span class="check-icon">✔</span>
+                        <p>메인 상단</p>
+                        <small>메인 페이지 상단배너로 <br>슬라이드 형식으로 노출</small>
+                        <div class="ad-image-box">
+                            <img src="/images/ad_top_image.png" alt="메인 상단 이미지">
+                        </div>
+                    </div>
+                </label>
+
+                <!-- 메인 중앙 -->
+                <label class="option">
+                    <input type="radio" name="adArea" value="mid"
+                           th:checked="${ad.adPosition == 'mid'}" disabled>
+                    <div class="option-box">
+                        <span class="check-icon">✔</span>
+                        <p>메인 중앙</p>
+                        <small>메인 페이지 중간배너로 <br>랜덤으로 노출</small>
+                        <div class="ad-image-box">
+                            <img src="/images/ad_mid_image.png" alt="메인 중앙 이미지">
+                        </div>
+                    </div>
+                </label>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-section">
+        <div class="form-header">
+            <h2>02 <span>광고기간</span></h2>
+            <p>광고시작일, 광고종료일</p>
+        </div>
+        <div class="form-content">
+            <div class="date-inputs">
+                <input type="datetime-local" id="adStart" name="adStart"
+                       th:value="${#temporals.format(ad.adStart, 'yyyy-MM-dd''T''HH:mm')}"
+                       readonly/>
+                <input type="datetime-local" id="adEnd" name="adEnd"
+                       th:value="${#temporals.format(ad.adEnd, 'yyyy-MM-dd''T''HH:mm')}"
+                       readonly/>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 광고명 -->
+    <div class="form-section">
+        <div class="form-header">
+            <h2>03 <span>광고명</span></h2>
+        </div>
+        <div class="form-content">
+            <p th:text="${ad.adTitle}">광고명</p>
+        </div>
+    </div>
+
+    <!-- 광고 URL -->
+    <div class="form-section">
+        <div class="form-header">
+            <h2>04 <span>광고 URL</span></h2>
+        </div>
+        <div class="form-content">
+            <a th:href="${ad.adUrl}" th:text="${ad.adUrl}">광고 URL</a>
+        </div>
+    </div>
+
+    <!-- 광고 이미지 -->
+    <div class="form-section">
+        <div class="form-header">
+            <h2>05 <span>광고 이미지</span></h2>
+        </div>
+        <div class="form-content image-section">
+            <div class="image-preview">
+                <img id="previewImage" th:src="${ad.adImage}" alt="이미지 미리보기">
+            </div>
+        </div>
+    </div>
+
+    <!-- 수정하기 버튼 -->
+    <button class="edit-btn" th:onclick="'location.href=\'/ad/edit/' + ${ad.id} + '\''">수정하기</button>
+    <button class="list-btn" onclick="location.href='/ad/list'">목록보기</button>
+    <div class="btn-group">
+        <button class="status-btn approve-btn" th:data-id="${ad.id}" th:data-status="승인">승인</button>
+        <button class="status-btn hold-btn" th:data-id="${ad.id}" th:data-status="보류">보류</button>
+        <button class="status-btn reject-btn" th:data-id="${ad.id}" th:data-status="거부">거부</button>
+    </div>
+
+
+</div>
+
+</body>
+</html>

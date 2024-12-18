@@ -1,0 +1,245 @@
+.container {
+    max-width: 1200px;
+    margin: 50px auto;
+    background: #fff;
+    padding: 60px;
+    border-radius: 12px;
+
+}
+
+
+.title {
+    font-size: 24px; /* 폰트 크기 키움 */
+    font-weight: 700;
+    margin: 0 0 30px;
+    text-align: center;
+}
+
+/* 버튼 그룹 */
+.btn-group {
+    text-align: right;
+    margin-bottom: 30px;
+}
+
+.register-btn-upload,
+.register-btn-delete {
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    border-radius: 8px; /* 둥근 버튼 */
+    cursor: pointer;
+    transition: all 0.3s ease; /* Hover 시 부드러운 전환 */
+}
+
+.register-btn-upload {
+    background: #000;
+}
+
+.register-btn-upload:hover {
+    background: #333;
+    transform: scale(1.05); /* Hover 시 확대 효과 */
+}
+
+.register-btn-delete {
+    background: #ffffff;
+    color: #d9363e;
+    border: 2px solid #d9363e;
+}
+
+.register-btn-delete:hover {
+    background: #d9363e;
+    color: #fff;
+    transform: scale(1.05);
+}
+
+/* 리스트 항목명 */
+.list-header {
+    border-bottom: 3px solid #000;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.list-header .row {
+    display: grid;
+    grid-template-columns: 4% 5% 15% 18% 14% 14% 15% 10% 5%;
+    font-weight: 700;
+    color: #555;
+    text-align: center;
+}
+
+/* 광고 리스트 */
+.ad-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.ad-item {
+    background: #fff;
+    border: 1px solid #eaeaea;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* 애니메이션 추가 */
+}
+
+.ad-item:hover {
+    transform: translateY(-5px); /* 위로 살짝 올라감 */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 4% 5% 15% 18% 14% 14% 15% 10% 5%;
+    align-items: center;
+    text-align: center;
+}
+
+/* 이미지 */
+.image-placeholder {
+    height: 80px;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #777;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* 이미지 넘침 방지 */
+    transition: transform 0.3s ease; /* Hover 시 애니메이션 */
+}
+.image-placeholder img {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+.image-placeholder:hover img {
+    transform: scale(1.1); /* Hover 시 이미지 확대 */
+}
+
+/* 상태 배지 */
+.badge {
+    padding: 8px 14px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 500;
+    opacity: 0;
+    animation: fadeIn 0.5s forwards; /* Fade-In 효과 */
+}
+
+/* 애니메이션 키프레임 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.badge-pending {
+    background-color: #FFC107;
+    color: #fff;
+}
+
+.badge-approved {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.badge-reject {
+    background-color: #DC3545;
+    color: #fff;
+}
+
+.badge-default {
+    background-color: #ddd;
+    color: #333;
+}
+
+/* 페이지네이션 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    gap: 5px;
+}
+
+.pagination a {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.pagination a.active {
+    background-color: #000;
+    color: #fff;
+}
+
+.pagination a:hover {
+    background-color: #555;
+    color: #fff;
+}
+
+.pagination .prev,
+.pagination .next {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+
+/* 광고 필터링 제목 스타일 */
+.filter-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: left;
+    color: #444;
+}
+.filter-container {
+    margin-bottom: -50px;
+}
+
+/* 필터 버튼 스타일 */
+.filter-btn {
+    padding: 0 8px;
+    font-size: 10px;
+    border: 1px solid #ccc;
+    border-radius: 50px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    background-color: #ddd;
+    border-color: #bbb;
+    transform: scale(1.1); /* Hover 시 확대 */
+}
+
+.filter-btn.selected {
+    border: 2px solid #333;
+    font-weight: bold;
+    background-color: #e0e0e0;
+}
+
+/* 승인, 보류, 거절 색상 */
+.filter-btn.approve {
+    background-color: #28a745;
+    color: #fff;
+}
+.filter-btn.hold {
+    background-color: #ffc107;
+    color: #fff;
+}
+.filter-btn.reject {
+    background-color: #dc3545;
+    color: #fff;
+}

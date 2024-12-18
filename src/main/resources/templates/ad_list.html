@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.7.1.js" crossorigin="anonymous"></script>
+    <script th:src="@{/js/ad_list.js}" defer></script>
+    <link th:href="@{/css/ad_list.css}" rel="stylesheet">
+    <title>광고 리스트</title>
+</head>
+<body>
+<section class="signup-section">
+    <div class="container">
+        <header>
+            <h1 class="title">광고 신청 리스트</h1>
+        </header>
+
+        <!-- 필터와 버튼 그룹을 한 줄에 배치 -->
+        <div class="header-controls">
+            <div class="filter-container">
+                <div class="filter-title">광고 필터링</div>
+                <div class="filter-group" id="position-filters">
+                    <button class="filter-btn selected" data-filter="all">전체</button>
+                    <button class="filter-btn" data-filter="side">사이드</button>
+                    <button class="filter-btn" data-filter="top">메인 상단</button>
+                    <button class="filter-btn" data-filter="mid">메인 중앙</button>
+                </div>
+                <div class="filter-group" id="status-filters">
+                    <button class="filter-btn selected" data-filter="all">전체</button>
+                    <button class="filter-btn approve" data-filter="승인">승인</button>
+                    <button class="filter-btn hold" data-filter="보류">보류</button>
+                    <button class="filter-btn reject" data-filter="거부">거부</button>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="register-btn-delete">광고삭제</button>
+                <a href="/ad/write">
+                    <button class="register-btn-upload">광고등록</button>
+                </a>
+            </div>
+        </div>
+
+        <!-- 리스트 항목명 -->
+        <div class="list-header">
+            <div class="row">
+                <input type="checkbox" class="select-all">
+                <span>NO</span>
+                <span>광고이미지</span>
+                <span>광고명</span>
+                <span>시작일</span>
+                <span>종료일</span>
+                <span>노출영역</span>
+                <span>상태</span>
+                <span>HIT</span>
+            </div>
+        </div>
+
+        <!-- 광고 리스트 -->
+        <div th:if="${#lists.isEmpty(ads)}">
+            <p>광고 데이터가 없습니다.</p>
+        </div>
+        <div th:each="ad, iterStat : ${ads}" class="ad-item" th:data-position="${ad.adPosition}" th:data-status="${ad.status}">
+            <div class="row" style="cursor: pointer;" th:data-id="${ad.id}">
+                <input type="checkbox" class="row-checkbox" th:attr="data-id=${ad.id}" onclick="event.stopPropagation();">
+                <span th:text="${iterStat.index + 1}"></span>
+                <div class="image-placeholder">
+                    <img th:src="${ad.adImage + '?v=' + #dates.format(now, 'yyyyMMddHHmmss')}" alt="광고 이미지" />
+                </div>
+                <span th:text="${ad.adTitle}">광고명</span>
+                <span th:text="${ad.adStart}">시작일</span>
+                <span th:text="${ad.adEnd}">종료일</span>
+                <span th:text="${ad.adPosition}">노출영역</span>
+                <span class="badge" th:classappend="'badge-' +
+                    (${ad.status} == '승인' ? 'approved' :
+                    (${ad.status} == '보류' ? 'pending' :
+                    (${ad.status} == '거부' ? 'reject' : 'default')))"
+                      th:text="${ad.status}">상태</span>
+                <span th:text="${ad.hits}">0</span>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="pagination">
+    <a th:href="@{/ad/list(page=${currentPage - 1})}" th:if="${currentPage > 0}" class="prev">← 이전</a>
+    <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+            <a th:href="@{/ad/list(page=${i})}"
+               th:text="${i + 1}"
+               th:classappend="${i == currentPage} ? 'active' : ''"></a>
+        </span>
+    <a th:href="@{/ad/list(page=${currentPage + 1})}" th:if="${currentPage < totalPages - 1}" class="next">다음 →</a>
+</div>
+</body>
+</html>
