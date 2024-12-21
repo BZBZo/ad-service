@@ -34,7 +34,6 @@ public class AdController {
     // 광고 등록 페이지
     @GetMapping("/write")
     public String showWritePage(Model model) {
-        model.addAttribute("ad", new Ad());
         return "ad_write";
     }
 
