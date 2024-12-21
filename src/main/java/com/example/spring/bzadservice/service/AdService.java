@@ -38,4 +38,8 @@ public class AdService {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
         return adRepository.findAll(pageable);
     }
+
+    public Optional<Ad> getAdDetail(Long id) {
+        return adRepository.findById(id);
+    }
 }
