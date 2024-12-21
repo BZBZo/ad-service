@@ -1,6 +1,7 @@
 package com.example.spring.bzadservice.controller;
 
 import com.example.spring.bzadservice.dto.AdDTO;
+import com.example.spring.bzadservice.dto.AdEditRequestDTO;
 import com.example.spring.bzadservice.dto.AdWriteRequestDTO;
 import com.example.spring.bzadservice.dto.AdWriteResponseDTO;
 import com.example.spring.bzadservice.entity.Ad;
@@ -8,22 +9,13 @@ import com.example.spring.bzadservice.repository.AdRepository;
 import com.example.spring.bzadservice.service.AdService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,39 +28,14 @@ public class AdApiController {
 
     @PostMapping("/write")
     public ResponseEntity<?> saveAd(@RequestBody AdWriteRequestDTO adWriteRequestDTO) {
-        // 광고 이미지 저장
-        String imagePath = saveAdImage(adWriteRequestDTO.getAdImage());
-        adWriteRequestDTO.setAdImagePath(imagePath);
 
-//        // DateTimeFormatter를 사용해 파싱
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+        adService.saveAd(adWriteRequestDTO);
 
-        adRepository.save(adWriteRequestDTO.toAd());
         return ResponseEntity.ok(
                         AdWriteResponseDTO.builder()
                                 .message("광고 신청이 완료되었습니다.")
                                 .build()
                 );
-    }
-
-    // 광고 이미지 저장 로직
-    private String saveAdImage(MultipartFile file) {
-        if (!file.isEmpty()) {
-            try {
-                String uploadDir = "uploads/images/";
-                String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-                Path path = Paths.get(uploadDir + fileName);
-
-                Files.createDirectories(path.getParent());
-                Files.write(path, file.getBytes());
-
-                // 브라우저에서 접근 가능한 경로 반환
-                return "/images/" + fileName;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
     }
 
     @GetMapping("/detail/{id}")
@@ -89,6 +56,38 @@ public class AdApiController {
                 .status(ad.getStatus() != null ? ad.getStatus() : "미정")
                 .hits(ad.getHits() != null ? ad.getHits() : 0)
                 .build();
+    }
+
+    @PostMapping("/edit/{id}")
+    public ResponseEntity<?> editAd(
+            @PathVariable Long id, @RequestBody AdEditRequestDTO adEditRequestDTO
+    ) {
+        adService.editAd(id, adEditRequestDTO);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "수정이 완료되었습니다.");
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/list")
+    public Page<AdDTO> getAds(@RequestParam("page") int page, @RequestParam("size") int size) {
+        Page<Ad> adsPage = adService.getAds(page, size);
+
+        Page<AdDTO> dtoPage = adsPage.map(ad -> AdDTO.builder()
+                .id(ad.getId())
+                .adPosition(ad.getAdPosition())
+                .adStart(ad.getAdStart())
+                .adEnd(ad.getAdEnd())
+                .adTitle(ad.getAdTitle())
+                .adUrl(ad.getAdUrl())
+                .adImage(ad.getAdImage())
+                .status(ad.getStatus())
+                .hits(ad.getHits())
+                .build()
+        );
+
+        return dtoPage;
     }
     //여기까지 고정. 수정 ㄴㄴ바램
 
