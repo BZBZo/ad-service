@@ -89,11 +89,9 @@ public class AdApiController {
 
         return dtoPage;
     }
-    //여기까지 고정. 수정 ㄴㄴ바램
 
-    @PostMapping("/delete")
-    public ResponseEntity<Map<String, String>> deleteAds(@RequestBody Map<String, List<Long>> request) {
-        List<Long> ids = request.get("ids");
+    @DeleteMapping("/erase")
+    public ResponseEntity<Map<String, String>> deleteAds(@RequestBody List<Long> ids) {
         if (ids == null || ids.isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("message", "삭제할 광고를 선택하세요."));
         }
@@ -106,6 +104,7 @@ public class AdApiController {
                     .body(Map.of("message", "서버 오류가 발생했습니다."));
         }
     }
+    //여기까지 고정. 수정 ㄴㄴ바램
 
     @PostMapping("/updateStatus/{id}")
     public ResponseEntity<Map<String, String>> updateStatus(
