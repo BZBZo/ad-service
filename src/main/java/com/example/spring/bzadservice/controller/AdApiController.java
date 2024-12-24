@@ -104,17 +104,11 @@ public class AdApiController {
                     .body(Map.of("message", "서버 오류가 발생했습니다."));
         }
     }
-    //여기까지 고정. 수정 ㄴㄴ바램
 
     @PostMapping("/updateStatus/{id}")
     public ResponseEntity<Map<String, String>> updateStatus(
             @PathVariable Long id,
-            @RequestBody Map<String, String> request) {
-        String newStatus = request.get("status");
-
-        if (newStatus == null || newStatus.isBlank()) {
-            return ResponseEntity.badRequest().body(Map.of("message", "상태 값이 제공되지 않았습니다."));
-        }
+            @RequestBody String newStatus) {
 
         Ad ad = adRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("광고를 찾을 수 없습니다. ID: " + id));
@@ -124,6 +118,5 @@ public class AdApiController {
 
         return ResponseEntity.ok(Map.of("message", "상태가 성공적으로 변경되었습니다."));
     }
-
 
 }
