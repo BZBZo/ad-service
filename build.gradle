@@ -33,6 +33,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
+    implementation 'io.github.cdimascio:dotenv-java:3.0.0'
+
+    //aws s3
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.1.RELEASE'
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     implementation 'org.hibernate.validator:hibernate-validator'
