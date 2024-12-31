@@ -3,6 +3,7 @@ package com.example.spring.bzadservice.config.s3;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,15 +32,20 @@ public class S3Uploader {
     public String uploadFileToS3(MultipartFile multipartFile, String filePath) {
         // MultipartFile -> File 로 변환
         File uploadFile = null;
-        try {
+
+        if (multipartFile.isEmpty()) {
+            throw new IllegalArgumentException("File is empty.");
+        } try {
+            // S3 업로드 로직
+            // 파일 저장 및 경로 리턴
             uploadFile = convert(multipartFile)
                     .orElseThrow(() -> new IllegalArgumentException("[error]: MultipartFile -> 파일 변환 실패"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to upload file to S3", e);
         }
 
         // S3에 저장된 파일 이름
-        String fileName = filePath + "/" + UUID.randomUUID();
+        String fileName = filePath + UUID.randomUUID();
 
         // s3로 업로드 후 로컬 파일 삭제
         String uploadImageUrl = putS3(uploadFile, fileName);
@@ -109,5 +116,13 @@ public class S3Uploader {
         }
 
         return Optional.empty();
+    }
+
+    public void ensureDirectoryExists(String folderPath) {
+        String key = folderPath.substring(bucket.length() + 1); // remove bucket name from key
+        if (!amazonS3Client.doesObjectExist(bucket, key)) {
+            amazonS3Client.putObject(bucket, key + "/", new ByteArrayInputStream(new byte[0]), new ObjectMetadata());
+            log.info("S3 폴더 생성 완료: " + folderPath);
+        }
     }
 }

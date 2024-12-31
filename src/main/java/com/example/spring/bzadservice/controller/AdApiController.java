@@ -7,12 +7,14 @@ import com.example.spring.bzadservice.dto.AdWriteResponseDTO;
 import com.example.spring.bzadservice.entity.Ad;
 import com.example.spring.bzadservice.repository.AdRepository;
 import com.example.spring.bzadservice.service.AdService;
+import com.example.spring.bzadservice.service.ImgServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -22,20 +24,34 @@ import java.util.*;
 @RequestMapping("/ad")
 public class AdApiController {
     private final AdService adService;
+    private final AdRepository adRepository;
+    private final ImgServiceImpl imgServiceImpl;
 
-    @Autowired
-    private AdRepository adRepository;
+    @PostMapping(value = "/write", consumes = "multipart/form-data")
+    public ResponseEntity<?> saveAd(
+            @RequestPart("adArea") String adPosition,
+            @RequestPart("startDate") String adStart,
+            @RequestPart("endDate") String adEnd,
+            @RequestPart("adName") String adTitle,
+            @RequestPart("adLink") String adUrl,
+            @RequestPart("adImage") MultipartFile adImage) {
+        LocalDateTime adStartDate = LocalDateTime.parse(adStart);
+        LocalDateTime adEndDate = LocalDateTime.parse(adEnd);
 
-    @PostMapping("/write")
-    public ResponseEntity<?> saveAd(@RequestBody AdWriteRequestDTO adWriteRequestDTO) {
+        // S3에 업로드할 고유한 파일 이름 생성
+        String uniqueFileName = "static/bz-image/"+ UUID.randomUUID();
 
-        adService.saveAd(adWriteRequestDTO);
+        // S3에 이미지 업로드
+        String imgUrl = imgServiceImpl.uploadImg(uniqueFileName, adImage);
+
+        // 나머지 항목들과 함께 고유 파일 이름을 저장
+        adService.saveAd(adPosition, adStartDate, adEndDate, adTitle, adUrl, imgUrl);
 
         return ResponseEntity.ok(
-                        AdWriteResponseDTO.builder()
-                                .message("광고 신청이 완료되었습니다.")
-                                .build()
-                );
+                AdWriteResponseDTO.builder()
+                        .message("광고 신청이 완료되었습니다.")
+                        .build()
+        );
     }
 
     @GetMapping("/detail/{id}")

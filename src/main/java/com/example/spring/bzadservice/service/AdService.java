@@ -53,15 +53,29 @@ public class AdService {
         return adRepository.findById(id);
     }
 
-    public void saveAd(AdWriteRequestDTO adWriteRequestDTO) {
-        // 광고 이미지 저장
-        String imagePath = saveAdImage(adWriteRequestDTO.getAdImage());
-        adWriteRequestDTO.setAdImagePath(imagePath);
+    //    public void saveAd(AdWriteRequestDTO adWriteRequestDTO) {
+//        // 광고 이미지 저장
+//        String imagePath = saveAdImage(adWriteRequestDTO.getAdImage());
+//        adWriteRequestDTO.setAdImagePath(imagePath);
+//
+////        // DateTimeFormatter를 사용해 파싱
+////        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+//
+//        adRepository.save(adWriteRequestDTO.toAd());
+//    }
+    public void saveAd(String adPosition, LocalDateTime adStartDate, LocalDateTime adEndDate,
+                       String adTitle, String adUrl, String imgUrl) {
 
-//        // DateTimeFormatter를 사용해 파싱
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+        Ad ad = Ad.builder()
+                .adPosition(adPosition)
+                .adStart(adStartDate)
+                .adEnd(adEndDate)
+                .adTitle(adTitle)
+                .adUrl(adUrl)
+                .adImage(imgUrl) // S3에 저장된 이미지 url
+                .build();
 
-        adRepository.save(adWriteRequestDTO.toAd());
+        adRepository.save(ad);
     }
 
     // 광고 이미지 저장 로직
