@@ -5,8 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
-
 @Service
 public class ImgServiceImpl implements ImgService {
     private final S3Uploader s3Uploader;
@@ -22,7 +20,7 @@ public class ImgServiceImpl implements ImgService {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("MultipartFile must not be null or empty.");
         } else {
-            url = s3Uploader.uploadFileToS3(file, "static/bz-image/");
+            url = s3Uploader.uploadFileToS3(file, "static/bz-ad/");
             return url;
         }
     }
