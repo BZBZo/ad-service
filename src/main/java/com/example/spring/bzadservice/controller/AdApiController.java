@@ -35,23 +35,33 @@ public class AdApiController {
             @RequestPart("adName") String adTitle,
             @RequestPart("adLink") String adUrl,
             @RequestPart("adImage") MultipartFile adImage) {
-        LocalDateTime adStartDate = LocalDateTime.parse(adStart);
-        LocalDateTime adEndDate = LocalDateTime.parse(adEnd);
+        try {
+            // 날짜 파싱
+            LocalDateTime adStartDate = LocalDateTime.parse(adStart);
+            LocalDateTime adEndDate = LocalDateTime.parse(adEnd);
 
-        // S3에 업로드할 고유한 파일 이름 생성
-        String uniqueFileName = "static/bz-image/"+ UUID.randomUUID();
+            // S3에 업로드할 고유한 파일 이름 생성
+            String uniqueFileName = "static/bz-image/" + UUID.randomUUID();
 
-        // S3에 이미지 업로드
-        String imgUrl = imgServiceImpl.uploadImg(uniqueFileName, adImage);
+            // S3에 이미지 업로드
+            String imgUrl = imgServiceImpl.uploadImg(uniqueFileName, adImage);
 
-        // 나머지 항목들과 함께 고유 파일 이름을 저장
-        adService.saveAd(adPosition, adStartDate, adEndDate, adTitle, adUrl, imgUrl);
+            // 광고 정보 저장
+            adService.saveAd(adPosition, adStartDate, adEndDate, adTitle, adUrl, imgUrl);
 
-        return ResponseEntity.ok(
-                AdWriteResponseDTO.builder()
-                        .message("광고 신청이 완료되었습니다.")
-                        .build()
-        );
+            // 성공 응답 반환
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "message", "광고 신청이 완료되었습니다."
+            ));
+        } catch (Exception e) {
+            // 예외 발생 시 에러 응답 반환
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                    "success", false,
+                    "message", "광고 등록 중 오류가 발생했습니다.",
+                    "error", e.getMessage() // 에러 메시지 추가 (디버깅용)
+            ));
+        }
     }
 
     @GetMapping("/detail/{id}")
