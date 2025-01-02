@@ -18,6 +18,9 @@ public class Ad {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "seller_id", nullable = false)
+    private Long sellerId;
+
     @Column(name = "ad_position")
     private String adPosition = "위치 없음";
 
@@ -40,7 +43,7 @@ public class Ad {
     private String adImage = "/images/default.jpg";
 
     @Column(name = "status")
-    private String status = "미정"; // 기본값
+    private String status = "보류"; // 기본값
 
     @Column(name = "hits")
     private Integer hits = 0; // 기본값

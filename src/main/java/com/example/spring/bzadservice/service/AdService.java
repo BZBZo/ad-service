@@ -5,6 +5,7 @@ import com.example.spring.bzadservice.dto.AdEditRequestDTO;
 import com.example.spring.bzadservice.dto.AdWriteRequestDTO;
 import com.example.spring.bzadservice.entity.Ad;
 import com.example.spring.bzadservice.repository.AdRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,13 +20,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class AdService {
-    @Autowired
-    private AdRepository adRepository;
+    private final AdRepository adRepository;
+    private final ImgServiceImpl imgServiceImpl;
 
     public AdDTO getAdDTO(Long id) {
         Ad ad = adRepository.findById(id)
@@ -98,23 +101,50 @@ public class AdService {
         return null;
     }
 
-    public void editAd(Long id, AdEditRequestDTO adEditRequestDTO) {
+    public void editAd(Long id,
+                       String adPosition, String adStart, String adEnd,
+                       String adTitle, String adUrl, MultipartFile adImage) {
+        // 광고 엔티티 조회
         Ad ad = adRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("광고를 찾을 수 없습니다."));
 
+        // 날짜 형식 변환 및 데이터 설정
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-        ad.setAdPosition(adEditRequestDTO.getAdPosition());
-        ad.setAdStart(LocalDateTime.parse(adEditRequestDTO.getAdStart(), formatter));
-        ad.setAdEnd(LocalDateTime.parse(adEditRequestDTO.getAdEnd(), formatter));
-        ad.setAdTitle(adEditRequestDTO.getAdTitle());
-        ad.setAdUrl(adEditRequestDTO.getAdUrl());
+        ad.setAdPosition(adPosition);
+        ad.setAdStart(LocalDateTime.parse(adStart, formatter));
+        ad.setAdEnd(LocalDateTime.parse(adEnd, formatter));
+        ad.setAdTitle(adTitle);
+        ad.setAdUrl(adUrl);
 
-        if (adEditRequestDTO.getAdImage() != null && !adEditRequestDTO.getAdImage().isEmpty()) {
-            String imagePath = saveAdImage(adEditRequestDTO.getAdImage());
-            ad.setAdImage(imagePath);
+        // 이미지가 비어 있지 않으면 S3에 업로드 및 URL 설정
+        if (adImage != null && !adImage.isEmpty()) {
+            try {
+                String uniqueFileName = "static/bz-image/" + UUID.randomUUID();
+                String imgUrl = imgServiceImpl.uploadImg(uniqueFileName, adImage); // S3 업로드
+                ad.setAdImage(imgUrl); // 새로운 이미지 URL 설정
+            } catch (Exception e) {
+                throw new RuntimeException("이미지 업로드 중 오류 발생: " + e.getMessage());
+            }
         }
 
+        // 변경된 광고 정보 저장
         adRepository.save(ad);
+    }
+
+    private boolean isSameImage(String existingImagePath, MultipartFile newImage) {
+        if (existingImagePath == null || existingImagePath.isEmpty()) {
+            return false; // 기존 이미지가 없는 경우 무조건 새로운 이미지로 저장
+        }
+
+        try {
+            // 기존 이미지 파일과 새로운 이미지 파일의 내용을 비교
+            byte[] existingImageBytes = Files.readAllBytes(Paths.get(existingImagePath));
+            byte[] newImageBytes = newImage.getBytes();
+
+            return Arrays.equals(existingImageBytes, newImageBytes);
+        } catch (IOException e) {
+            throw new RuntimeException("이미지 비교 중 오류 발생", e);
+        }
     }
 
 }
