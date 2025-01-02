@@ -86,14 +86,35 @@ public class AdApiController {
 
     @PostMapping("/edit/{id}")
     public ResponseEntity<?> editAd(
-            @PathVariable Long id, @RequestBody AdEditRequestDTO adEditRequestDTO
+            @PathVariable Long id,
+            @RequestPart("adArea") String adPosition,
+            @RequestPart("startDate") String adStart,
+            @RequestPart("endDate") String adEnd,
+            @RequestPart("adName") String adTitle,
+            @RequestPart("adLink") String adUrl,
+            @RequestPart("adImage") MultipartFile adImage
     ) {
-        adService.editAd(id, adEditRequestDTO);
 
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "수정이 완료되었습니다.");
+        try {
+            // 광고 수정 처리
+            adService.editAd(id, adPosition, adStart, adEnd, adTitle, adUrl, adImage);
 
-        return ResponseEntity.ok(response);
+            // 성공 응답
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "수정이 완료되었습니다.");
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            // 유효하지 않은 요청 처리
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "message", e.getMessage()
+            ));
+        } catch (Exception e) {
+            // 기타 예외 처리
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                    "message", "수정 중 오류가 발생했습니다.",
+                    "details", e.getMessage() // 필요 시 세부 정보 포함
+            ));
+        }
     }
 
     @GetMapping("/list")
