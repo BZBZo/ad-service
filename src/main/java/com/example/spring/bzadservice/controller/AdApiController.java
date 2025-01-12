@@ -1,5 +1,6 @@
 package com.example.spring.bzadservice.controller;
 
+import com.example.spring.bzadservice.config.s3.S3Uploader;
 import com.example.spring.bzadservice.dto.AdDTO;
 import com.example.spring.bzadservice.dto.AdEditRequestDTO;
 import com.example.spring.bzadservice.dto.AdWriteRequestDTO;
@@ -26,6 +27,7 @@ public class AdApiController {
     private final AdService adService;
     private final AdRepository adRepository;
     private final ImgServiceImpl imgServiceImpl;
+    private final S3Uploader s3Uploader;
 
     @PostMapping(value = "/write", consumes = "multipart/form-data")
     public ResponseEntity<?> saveAd(
@@ -143,6 +145,11 @@ public class AdApiController {
             return ResponseEntity.badRequest().body(Map.of("message", "삭제할 광고를 선택하세요."));
         }
         try {
+            for(Long id : ids) {
+                // 먼저 S3에 있는 이미지부터 삭제
+                adService.deleteAdImages(id);
+            }
+            // 디비 튜플 삭제
             adRepository.deleteAllById(ids);
             return ResponseEntity.ok(Map.of("message", "광고가 삭제되었습니다."));
         } catch (Exception e) {
