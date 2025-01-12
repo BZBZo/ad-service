@@ -1,5 +1,6 @@
 package com.example.spring.bzadservice.service;
 
+import com.example.spring.bzadservice.config.s3.S3Uploader;
 import com.example.spring.bzadservice.dto.AdDTO;
 import com.example.spring.bzadservice.dto.AdEditRequestDTO;
 import com.example.spring.bzadservice.dto.AdWriteRequestDTO;
@@ -29,6 +30,7 @@ import java.util.UUID;
 public class AdService {
     private final AdRepository adRepository;
     private final ImgServiceImpl imgServiceImpl;
+    private final S3Uploader s3Uploader;
 
     public AdDTO getAdDTO(Long id) {
         Ad ad = adRepository.findById(id)
@@ -147,4 +149,13 @@ public class AdService {
         }
     }
 
+    public void deleteAdImages(Long id) {
+        Optional<Ad> ad = adRepository.findById(id);
+        String filePath = ad.get().getAdImage();
+        try {
+            s3Uploader.deleteS3(filePath);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
