@@ -29,24 +29,48 @@ ext {
 }
 
 dependencies {
+    // Spring Boot Dependencies
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
-    implementation 'com.mysql:mysql-connector-j'
-    implementation 'org.thymeleaf.extras:thymeleaf-extras-java8time:3.0.4.RELEASE'
-    implementation 'org.hibernate.validator:hibernate-validator'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs'
+    implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.0.1")
 
+    // OpenFeign for REST Clients
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+    // MySQL Driver
+    implementation 'com.mysql:mysql-connector-j'
+    runtimeOnly 'mysql:mysql-connector-java'
+
+    // Thymeleaf Extras
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-java8time:3.0.4.RELEASE'
+
+    // Hibernate Validator
+    implementation 'org.hibernate.validator:hibernate-validator'
+
+    // AWS SDK 2.x for Lambda and SQS
+    implementation 'software.amazon.awssdk:sqs:2.20.17'
+    implementation 'software.amazon.awssdk:lambda:2.20.17'
+
+    // AWS SDK 2.x for CloudWatch Events
+    implementation 'software.amazon.awssdk:cloudwatchevents:2.20.17'  // 최신 버전으로 변경 가능
+
+    // AWS SDK 2.x Dependencies
+    implementation 'software.amazon.awssdk:s3:2.20.17'
+    implementation 'software.amazon.awssdk:cloudwatch:2.20.17'
+    implementation 'software.amazon.awssdk:cloudwatchlogs:2.20.17'
+
+    // Environment Variables Management
     implementation 'io.github.cdimascio:dotenv-java:3.0.0'
-    //aws s3
-    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.1.RELEASE'
 
+    // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+
+    // Testing Dependencies
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    runtimeOnly 'mysql:mysql-connector-java'
 }
 
 dependencyManagement {

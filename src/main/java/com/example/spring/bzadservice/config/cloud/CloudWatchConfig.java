@@ -1,4 +1,4 @@
-package com.example.spring.bzadservice.config.s3;
+package com.example.spring.bzadservice.config.cloud;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -6,11 +6,10 @@ import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
-
+import software.amazon.awssdk.services.cloudwatchevents.CloudWatchEventsClient;
 
 @Configuration
-public class S3Config {
+public class CloudWatchConfig {
 
     @Value("${cloud.aws.credentials.access-key}")
     private String iamAccessKey;
@@ -22,10 +21,10 @@ public class S3Config {
     private String region;
 
     @Bean
-    public S3Client s3Client() {
+    public CloudWatchEventsClient cloudWatchEventsClient() {
         AwsBasicCredentials awsCredentials = AwsBasicCredentials.create(iamAccessKey, iamSecretKey);
 
-        return S3Client.builder()
+        return CloudWatchEventsClient.builder()
                 .region(Region.of(region))
                 .credentialsProvider(StaticCredentialsProvider.create(awsCredentials))
                 .build();
