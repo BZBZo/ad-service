@@ -3,12 +3,14 @@ package com.example.spring.bzadservice.dto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Builder
+@ToString
 public class AdDTO {
     private Long id;
     private String adPosition;

@@ -1,10 +1,7 @@
 package com.example.spring.bzadservice.controller;
 
 import com.example.spring.bzadservice.config.s3.S3Uploader;
-import com.example.spring.bzadservice.dto.AdDTO;
-import com.example.spring.bzadservice.dto.AdEditRequestDTO;
-import com.example.spring.bzadservice.dto.AdWriteRequestDTO;
-import com.example.spring.bzadservice.dto.AdWriteResponseDTO;
+import com.example.spring.bzadservice.dto.*;
 import com.example.spring.bzadservice.entity.Ad;
 import com.example.spring.bzadservice.repository.AdRepository;
 import com.example.spring.bzadservice.service.AdService;
@@ -13,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,15 +27,18 @@ public class AdApiController {
     private final ImgServiceImpl imgServiceImpl;
     private final S3Uploader s3Uploader;
 
-    @PostMapping(value = "/write", consumes = "multipart/form-data")
+    @PostMapping(value = "/write", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> saveAd(
-            @RequestPart("adArea") String adPosition,
-            @RequestPart("startDate") String adStart,
-            @RequestPart("endDate") String adEnd,
-            @RequestPart("adName") String adTitle,
-            @RequestPart("adLink") String adUrl,
+            @RequestParam("adArea") String adPosition,
+            @RequestParam("startDate") String adStart,
+            @RequestParam("seller_id") Long seller_id,
+            @RequestParam("endDate") String adEnd,
+            @RequestParam("adName") String adTitle,
+            @RequestParam("adLink") String adUrl,
             @RequestPart("adImage") MultipartFile adImage) {
         try {
+            System.out.println("seller_id :: " + seller_id);
+            System.out.println("adPosition :: " + adPosition);
             // 날짜 파싱
             LocalDateTime adStartDate = LocalDateTime.parse(adStart);
             LocalDateTime adEndDate = LocalDateTime.parse(adEnd);
@@ -49,7 +50,7 @@ public class AdApiController {
             String imgUrl = imgServiceImpl.uploadImg(uniqueFileName, adImage);
 
             // 광고 정보 저장
-            adService.saveAd(adPosition, adStartDate, adEndDate, adTitle, adUrl, imgUrl);
+            adService.saveAd(adPosition, adStartDate,seller_id, adEndDate, adTitle, adUrl, imgUrl);
 
             // 성공 응답 반환
             return ResponseEntity.ok(Map.of(
@@ -164,13 +165,19 @@ public class AdApiController {
             @PathVariable Long id,
             @RequestBody String newStatus) {
 
-        Ad ad = adRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("광고를 찾을 수 없습니다. ID: " + id));
-
-        ad.setStatus(newStatus); // 상태 업데이트
-        adRepository.save(ad);
+        adService.updateStatus(id, newStatus);
 
         return ResponseEntity.ok(Map.of("message", "상태가 성공적으로 변경되었습니다."));
+    }
+
+    @GetMapping("/reserved-times")
+    public List<GetResolvesTimesRequestDTO> getReservedTimes(@RequestParam String nowArea) {
+        return adService.getReservedTimes(nowArea);
+    }
+
+    @GetMapping("/getAd")
+    List<AdDTO> getAds(){
+        return adService.getAds();
     }
 
 }
